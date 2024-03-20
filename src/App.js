@@ -17,33 +17,23 @@ const choice = {
   }
 };
 
+// 승패 결과에 따라 색이 바뀐다.(이기면 초록, 지면 빨강, 비기면 검은색)
+// 컴퓨터의 승패 결과를 보여준다.
+
 function App() {
   const [userSelect, setUserSelect] = useState(null);
   const [computerSelect, setComputerSelect] = useState(null);
-  const [result, setResult] = useState("");
+  const [userResult, setUserResult] = useState("");
+  const [computerResult, setComputerResult] = useState("");
   
   const play = (userChoice) => {
     setUserSelect(choice[userChoice]);
     let computerChoice = randomChoice();
     setComputerSelect(computerChoice);
-    setResult(judgement(choice[userChoice], computerChoice));
+    setUserResult(judgement(choice[userChoice], computerChoice));
+    setComputerResult(judgement(computerChoice, choice[userChoice]));
   };
-
-  const judgement = (user, computer) => {
-    if (user.name === computer.name){
-      return "tie"
-    }
-    else if (user.name === "Rock") {
-      return computer.name === "Scissors" ? "win" : "lose"
-    }
-    else if (user.name === "Scissors") {
-      return computer.name === "Paper" ? "win" : "lose"
-    }
-    else if (user.name === "Paper") {
-      return computer.name === "Rock" ? "win" : "lose"
-    }
-  };
-
+  
   const randomChoice = () => {
     let itemArray = Object.keys(choice);
     let randomItem = Math.floor(Math.random()*itemArray.length);
@@ -51,11 +41,37 @@ function App() {
     return choice[final];
   }
   
+  const judgement = (player1, player2) => {
+    if (player1.name === player2.name){
+      return "tie"
+    }
+    else if (player1.name === "Rock") {
+      return player2.name === "Scissors" ? "win" : "lose"
+    }
+    else if (player1.name === "Scissors") {
+      return player2.name === "Paper" ? "win" : "lose"
+    }
+    else if (player1.name === "Paper") {
+      return player2.name === "Rock" ? "win" : "lose"
+    }
+  };
+
+  const boxStyle = (user) => {
+    if (user === "win")
+      return {borderColor: 'green'}
+    else if (user === "tie")
+      return {borderColor: 'black'}
+    else
+      return {borderColor: 'red'}
+  }
+
   return (
     <>
       <div className="main">
-        <Box title="You" item={userSelect} result={result} />
-        <Box title="Computer" item={computerSelect} />
+        <Box title="You" item={userSelect} result={userResult} 
+          initShow="가위,바위,보 중 선택하세요" boxstyle={boxStyle(userResult)} />
+        <Box title="Computer" item={computerSelect} result={computerResult} 
+          initShow="컴퓨터는 자동 선택입니다" boxstyle={boxStyle(computerResult)} />
       </div>
       <div className="main">
         <button onClick={() => play("scissors")}>가위</button>
